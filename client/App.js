@@ -6,30 +6,32 @@ import './App.css';
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
+
+    const userInput = input;
+    setMessages(prev => [...prev, { role: "user", text: userInput }]);
+    setInput("");
+    setIsLoading(true);
 
     try {
-      const res = await axios.post("https://chibot.onrender.com/chat", {
-        message: input
+      // ✅ Correct API endpoint
+      const res = await axios.post("https://ai-chat-app-goil.onrender.com/chat", {
+        message: userInput
       });
 
-      setMessages([
-        ...messages,
-        { role: "user", text: input },
-        { role: "bot", text: res.data.reply }
-      ]);
+      setMessages(prev => [...prev, { role: "bot", text: res.data.reply }]);
     } catch (error) {
       console.error("API call failed:", error.response?.data || error.message);
-      setMessages([
-        ...messages,
-        { role: "user", text: input },
-        { role: "bot", text: "Error: Unable to get response from server." }
+      setMessages(prev => [
+        ...prev,
+        { role: "bot", text: "⚠️ Error: Unable to get response from server." }
       ]);
     }
 
-    setInput("");
+    setIsLoading(false);
   };
 
   return (
@@ -41,6 +43,7 @@ function App() {
             {msg.text}
           </div>
         ))}
+        {isLoading && <div className="bot">Typing...</div>}
       </div>
       <input
         value={input}
