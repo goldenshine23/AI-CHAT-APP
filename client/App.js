@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
@@ -9,8 +8,17 @@ function App() {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-    const res = await axios.post("http://localhost:5000/chat", { message: input });
-    setMessages([...messages, { role: "user", text: input }, { role: "bot", text: res.data.reply }]);
+
+    try {
+      // ✅ Use your actual backend URL
+      const res = await axios.post("https://chibot.onrender.com/chat", { message: input });
+
+      setMessages([...messages, { role: "user", text: input }, { role: "bot", text: res.data.reply }]);
+    } catch (error) {
+      console.error("API call failed:", error.response?.data || error.message);
+      setMessages([...messages, { role: "user", text: input }, { role: "bot", text: "Error: Unable to get response from server." }]);
+    }
+
     setInput("");
   };
 
