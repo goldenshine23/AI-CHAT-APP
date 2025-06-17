@@ -46,7 +46,7 @@ jobs:
       run: az account set --subscription ${{ env.SUBSCRIPTION_ID }}
 
     - name: Get AKS credentials
-      run: az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --overwrite-existing
+      run: az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 
     - name: Deploy to AKS
       run: |
