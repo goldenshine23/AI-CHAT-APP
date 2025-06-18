@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 env:
   RESOURCE_GROUP: ${{ secrets.AZURE_RG }}
@@ -54,5 +55,6 @@ jobs:
 
     - name: Deploy to AKS using kubectl
       run: |
-        kubectl apply -f k8s/frontend-deployment.yaml
-        kubectl apply -f k8s/backend-deployment.yaml
+        kubectl apply -f Kubernetes/frontend-deployment.yaml
+        kubectl apply -f Kubernetes/backend-deployment.yaml
+
