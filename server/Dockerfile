@@ -4,17 +4,17 @@ FROM node:18-alpine
 # Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if exists)
+# Copy package.json and package-lock.json first (for better Docker layer caching)
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --production
+# Install only production dependencies
+RUN npm ci --only=production
 
-# Copy all backend source files
+# Copy the rest of the backend source code
 COPY . .
 
-# Expose port your server listens on (default 5000)
+# Expose the port the server listens on
 EXPOSE 5000
 
-# Start the server
+# Start the Node.js server
 CMD ["node", "index.js"]

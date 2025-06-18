@@ -5,30 +5,28 @@ WORKDIR /app
 
 # Copy and install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-# Copy source and build
+# Copy source code
 COPY . .
 
-# Accept dynamic environment variable
+# Accept environment variable at build time
 ARG REACT_APP_API_URL
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
-# Build React app
+# Build the React app
 RUN npm run build
 
 # Stage 2: Serve with Nginx
 FROM nginx:stable-alpine
 
-# Copy custom Nginx config if available
+# Copy custom Nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy build output to Nginx HTML directory
+# Copy the React build output
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80
 
-# Run Nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
-COPY nginx.conf /etc/nginx/conf.d/default.conf
